@@ -1,0 +1,3 @@
+### CTCenter
+## Holds information about a center modeled after the CT center, including tutors, their attributes, and their schedules.
+Can be used to look up tutors by and for their attributes. Also offers functionality to upload the day's attendances by simply copy and pasting the RedRock report for the day. For example: if a tutor calls out, I may want to check to see which tutors are available to cover their shifts. Using this program will be a lot quicker than searching the calendar, the roster, and/or RedRock. With CTCenter, you can simply use the reschedule function to see a list of possible sessions to move a student to.
