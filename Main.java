@@ -80,10 +80,24 @@ public class Main {
                 }
                 ArrayList<Tutor> tutors = CT.tutorsForCourseToday(course, day);
                 for (int i = 0; i < tutors.size(); i++) {
-                    ArrayList<Session> apptsToday = tutors.get(i).getSessionsForToday(day);
-                    for (int j = 0; j < apptsToday.size(); j++) {
-                        System.out.println(apptsToday.get(j).toString());
-                    }
+                    System.out.println(tutors.get(i).toString());
+                }
+            } else if (prompt.equals("7") || prompt.equals("reschedule")) {
+                System.out.println("Enter a day (e.g Monday)");
+                String day = sc.nextLine().strip();
+                while (!validDay(day)) {
+                    System.out.println("Looks like you haven't entered a valid day. Try again: ");
+                    day = sc.nextLine().strip();
+                }
+                System.out.println("Enter a course");
+                String course = sc.nextLine().strip().toUpperCase();
+                while (!CT.courses.contains(course)) {
+                    System.out.println("Looks like the course you entered doesn't match any in our CT Center. Make sure to use the format like MATH10C or PSYC60:");
+                    course = sc.nextLine().strip().toUpperCase();
+                }
+                ArrayList<Session> sessions = CT.reschedule(course, day);
+                for (int i = 0; i < sessions.size(); i++) {
+                    System.out.println(sessions.get(i).toString());
                 }
             }
             else if (prompt.equals("10") || prompt.equals("load attendance")) {
@@ -116,7 +130,7 @@ public class Main {
     }
 
     private static void printFunctions() {
-        System.out.println("Functions: 1)list tutors | 2)primsubj | 3)secsubj | 4)tutor's courses | 5)tutor schedule | 6)tutors for a course today | 10)upload attendance | 100)exit | 101)help");
+        System.out.println("Functions: 1)list tutors | 2)primsubj | 3)secsubj | 4)tutor's courses | 5)tutor schedule | 6)tutors for a course today | 7)reschedule | 10)upload attendance | 100)exit | 101)help");
     }
 
     private static void printTutors(Center ct) {
@@ -205,7 +219,11 @@ public class Main {
         }
         else if (command.equals("6") || command.equals("tutors for a course today")) {
             toReturn += "will prompt you for a day (make sure to type Monday, Tuesday, Wednesday, Thursday and so on). Finally, you will be prompted for a course (make sure to type in the format like MATH10C, where all alphabetic letters are capitalized and there is no space between the subject and the ID.). After all that, the program will print a list of all the tutors' appointments that are today for a certain course.";
-        } else if (command.equals("10") || command.equals("load attendance")) {
+        } 
+        else if (command.equals("7") || command.equals("reschedule")) {
+            toReturn += "will prompt you for a day and course. Then the program will give you a list of still-open sessions (take note if you want to upload attendance first to see which sessions are full!), of which you can go to RedRock and schedule the student for!";
+        }
+        else if (command.equals("10") || command.equals("load attendance")) {
             toReturn += "will cause a window to pop up. Copy and paste the RedRock report for the day you want to load attendances for and press <enter>. The program will go through the report and check if tutors have appointments, then take note of those appointments. Once those appointments are loaded, you can use the 5/tutor schedule command to check if a certain tutor has correctly had their appointments uploaded. Attendances and/or pospective attendances will be recorded and displayed as PID:Course.";
         }
 

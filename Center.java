@@ -329,6 +329,21 @@ public class Center {
         return tutors;
     }
 
+    public ArrayList<Session> reschedule(String course, String today) {
+        ArrayList<Session> toReturn = new ArrayList<>();
+        ArrayList<Tutor> tutorsToday = tutorsForCourseToday(course, today);
+        for (int i = 0; i < tutorsToday.size(); i++) {
+            ArrayList<Session> tutorsSessionsToday = tutorsToday.get(i).getSessionsForToday(today);
+            for (int j = 0; j < tutorsSessionsToday.size(); j++) {
+                Session curr = tutorsSessionsToday.get(j);
+                if (!curr.isFull()) {
+                    toReturn.add(curr);
+                }
+            }
+        }
+        return toReturn;
+    }
+
     /**
      * Returns names in our tutor database close to the given string.
      * @param name
