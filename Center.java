@@ -9,10 +9,25 @@ import java.util.ArrayList;
 public class Center {
     public ArrayList<Tutor> listOfTutors;
     String name;
+    ArrayList<String> courses;
 
     public Center(String name) {
         this.name = name;
         this.listOfTutors = new ArrayList<>();
+        this.courses = getCourses();
+    }
+
+    public ArrayList<String> getCourses() {
+        String[] initList = {"BIBC102", "BICD100", "BILD1", "BILD2", "BILD3", "BIMM100", "BIPN100",
+            "CHEM40A", "CHEM40B", "CHEM41A", "CHEM41B", "CHEM41C", "CHEM6A", "CHEM6B", "CHEM6C", "ECON1",
+            "ECON3", "MATH102", "MATH109", "MATH10A", "MATH10B", "MATH10C", "MATH11", "MATH170A", "MATH18",
+            "MATH2", "MATH20A", "MATH20B", "MATH20C", "MATH20D", "MATH20E", "MATH3C", "MATH4C", "PHYS1A", 
+            "PHYS1B", "PHYS1C", "PHYS2A", "PHYS2B", "PHYS2C", "PSYC60"};
+        ArrayList<String> courses = new ArrayList<>();
+        for (int i = 0; i < initList.length; i++) {
+            courses.add(initList[i]);
+        }
+        return courses;
     }
 
     public void reload(String tutorsFile, String schedFile) {
@@ -349,5 +364,13 @@ public class Center {
         for (int i = 0; i < listOfTutors.size(); i++) {
             listOfTutors.get(i).clearAttendance();
         }
+    }
+
+    public void addCourse(String course) {
+        String cls = course;
+        if (course.split(" ").length > 1) {
+            cls = course.split(" ")[0].toUpperCase() + course.split(" ")[1];
+        }
+        this.courses.add(cls);
     }
 }

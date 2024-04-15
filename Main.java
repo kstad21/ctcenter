@@ -9,6 +9,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 public class Main {
+    public static String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SUNDAY"};
     public static void main(String[] args) {
         Center CT = new Center("Content Tutoring Center");
         CT.reload("tutors.csv", "schedule.csv");
@@ -65,11 +66,18 @@ public class Main {
                 System.out.println(CT.findTutor(name).getWeeklySchedule());
             } 
             else if (prompt.equals("6") || prompt.equals("tutors for a course today")) {
-                //VALIDATION?
                 System.out.println("Enter a day (e.g Monday)");
                 String day = sc.nextLine().strip();
+                while (!validDay(day)) {
+                    System.out.println("Looks like you haven't entered a valid day. Try again: ");
+                    day = sc.nextLine().strip();
+                }
                 System.out.println("Enter a course");
                 String course = sc.nextLine().strip().toUpperCase();
+                while (!CT.courses.contains(course)) {
+                    System.out.println("Looks like the course you entered doesn't match any in our CT Center. Make sure to use the format like MATH10C or PSYC60:");
+                    course = sc.nextLine().strip().toUpperCase();
+                }
                 ArrayList<Tutor> tutors = CT.tutorsForCourseToday(course, day);
                 for (int i = 0; i < tutors.size(); i++) {
                     ArrayList<Session> apptsToday = tutors.get(i).getSessionsForToday(day);
@@ -96,6 +104,15 @@ public class Main {
         }
 
         
+    }
+
+    private static boolean validDay(String day) {
+        for (int i = 0; i < days.length; i++) {
+            if (days[i].equals(day.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void printFunctions() {
@@ -187,7 +204,7 @@ public class Main {
             toReturn += "will prompt you for a tutor. Try to make sure you type the full name with correct capitalization, but there should be some safeguarding there. For example, type in Connor Gilcrest, not connor gilcrest or Connor or connor. Then the program will print the tutor's schedule, including attendances IF attendances have been uploaded.";
         }
         else if (command.equals("6") || command.equals("tutors for a course today")) {
-            toReturn += "will prompt you for a day (make sure to type Monday, Tuesday, Wednesday, Thursday and so on) and a tutor name (try to make sure you type the full name with correct capitalization, but there should be some safeguarding there. For example, type in Connor Gilcrest, not connor gilcrest or Connor or connor). Finally, you will be prompted for a course (make sure to type in the format like MATH10C, where all alphabetic letters are capitalized and there is no space between the subject and the ID.). After all that, the program will print a list of all the tutors that have appointments today for a certain course.";
+            toReturn += "will prompt you for a day (make sure to type Monday, Tuesday, Wednesday, Thursday and so on). Finally, you will be prompted for a course (make sure to type in the format like MATH10C, where all alphabetic letters are capitalized and there is no space between the subject and the ID.). After all that, the program will print a list of all the tutors' appointments that are today for a certain course.";
         } else if (command.equals("10") || command.equals("load attendance")) {
             toReturn += "will cause a window to pop up. Copy and paste the RedRock report for the day you want to load attendances for and press <enter>. The program will go through the report and check if tutors have appointments, then take note of those appointments. Once those appointments are loaded, you can use the 5/tutor schedule command to check if a certain tutor has correctly had their appointments uploaded. Attendances and/or pospective attendances will be recorded and displayed as PID:Course.";
         }
