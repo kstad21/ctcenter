@@ -81,6 +81,14 @@ public class Main {
             else if (prompt.equals("10") || prompt.equals("load attendance")) {
                 collectAttendance(CT);
             }
+            else if (prompt.contains("help") || prompt.contains("101")) {
+                String[] command = prompt.split(" ");
+                if (command.length <= 1) {
+                    System.out.println("Make sure to include the command you're looking for help on, like typing 'help 1' or 'help list tutors' if you're looking for guidance on the 1/list tutors command.");
+                } else {
+                    System.out.println(getHelp(prompt.split(" ")[1]));
+                }
+            }
             else if (prompt.equals("exit") || prompt.equals("100")) {
                 running = false;
             }
@@ -155,6 +163,35 @@ public class Main {
                 toReturn += " ";
             }
         }
+        return toReturn;
+    }
+
+    public static String  getHelp(String command) {
+        String toReturn = "This command ";
+        if (command.equals("")) {
+            toReturn = "Make sure to include the command you're looking for help on, like typing 'help 1' or 'help list tutors' if you're looking for guidance on the 1/list tutors command.";
+        }
+        else if (command.equals("1") || command.equals("list tutors")) {
+            toReturn += "prints out a list of all the tutors in the CT center! You'll see their names, primary subject, secondary subject, and the amount of courses they offer.";
+        }
+        else if (command.equals("2") || command.equals("primsubj")) {
+            toReturn += "will prompt you for a primary subject, like MATH, BIO, CHEM(GEN), CHEM(O), PSYC, PHYSICS. Make sure to type exactly the subject as listed.";
+        }
+        else if (command.equals("3") || command.equals("secsubj")) {
+            toReturn += "will prompt you for a secondary subject, like MATH, CHEM(GEN), CHEM(O), PSYC, PHYSICS. Make sure to type exactly the subject as listed.";
+        }
+        else if (command.equals("4") || command.equals("tutor's courses")) {
+            toReturn += "will prompt you for a tutor. Try to make sure you type the full name with correct capitalization, but there should be some safeguarding there. For example, type in Connor Gilcrest, not connor gilcrest or Connor or connor. Then the program will print a list of the tutor's courses.";
+        }
+        else if (command.equals("5") || command.equals("tutor schedule")) {
+            toReturn += "will prompt you for a tutor. Try to make sure you type the full name with correct capitalization, but there should be some safeguarding there. For example, type in Connor Gilcrest, not connor gilcrest or Connor or connor. Then the program will print the tutor's schedule, including attendances IF attendances have been uploaded.";
+        }
+        else if (command.equals("6") || command.equals("tutors for a course today")) {
+            toReturn += "will prompt you for a day (make sure to type Monday, Tuesday, Wednesday, Thursday and so on) and a tutor name (try to make sure you type the full name with correct capitalization, but there should be some safeguarding there. For example, type in Connor Gilcrest, not connor gilcrest or Connor or connor). Finally, you will be prompted for a course (make sure to type in the format like MATH10C, where all alphabetic letters are capitalized and there is no space between the subject and the ID.). After all that, the program will print a list of all the tutors that have appointments today for a certain course.";
+        } else if (command.equals("10") || command.equals("load attendance")) {
+            toReturn += "will cause a window to pop up. Copy and paste the RedRock report for the day you want to load attendances for and press <enter>. The program will go through the report and check if tutors have appointments, then take note of those appointments. Once those appointments are loaded, you can use the 5/tutor schedule command to check if a certain tutor has correctly had their appointments uploaded. Attendances and/or pospective attendances will be recorded and displayed as PID:Course.";
+        }
+
         return toReturn;
     }
 }
