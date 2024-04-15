@@ -54,13 +54,17 @@ public class Center {
         }
     }
 
+    /**
+     * Load schedule from a csv file.
+     * Name,Day Subject IP time-time time-time,Day Subject IP time-time time-time
+     * @param fileName
+     */
     public void loadApptsFromCSV(String fileName) {
         Path pathToFile = Paths.get("csv-files/" + fileName);
         int lineNum = 1;
         
         try (BufferedReader br = Files.newBufferedReader(pathToFile,
                 StandardCharsets.US_ASCII)) {
-            int linenum = 1;
             String line = br.readLine();
 
             while (line != null) {
@@ -83,7 +87,7 @@ public class Center {
                 } else {
                     System.out.println("No tutor found for name: " + name);
                 }
-                linenum++;
+                lineNum++;
                 line = br.readLine();
             }
 
@@ -92,16 +96,143 @@ public class Center {
         }
     }
 
+    public void loadAttendanceFromCSV(String fileName) {
+        Path pathToFile = Paths.get("csv-files/" + fileName);
+        int lineNum = 1;
+        
+        try (BufferedReader br = Files.newBufferedReader(pathToFile,
+                StandardCharsets.US_ASCII)) {
+            String line = br.readLine();
+            String dayOfWeek = parseDayOfWeek(line.split(" ")[5]);
+            String name = "Emma Abbe";
+            Tutor t = findTutor(name);
+            String[] findAppts = line.split("Appointments: ");
+            while (line.strip().length() > 0 || line != null) {
+                if (findAppts.length > 1 && !findAppts[1].strip().contains("none   Availabilities:")) {
+                    String[] findName = findAppts[0].split(" ");
+                    if (findName[0].equals("Garvit")) {
+                        name = "Garvit Agarwal";
+                    } else if (findName[0].equals("Sean")) {
+                        name = "Sean Hsu";
+                    } else if (findName[0].equals("Swadhin")) {
+                        name = "Swadhin Rout";
+                    } else if (findName[0].equals("Sriram")) {
+                        name = "Sriram Selvakumara";
+                    } else {
+                        if (!(lineNum == 1)) {
+                            name = findName[0] + " " + findName[1];
+                        }
+                    }
+                    t = findTutor(name);
+                    String[] indiv = findAppts[1].split("2403");
+                    useApptInfo(indiv, t, dayOfWeek);
+                }
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                lineNum++;
+                if (lineNum == 52) {
+                    System.out.println("here");
+                }
+                findAppts = line.split("Appointments: ");
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error at line: " + lineNum);
+        }
+    }
+
+    private void useApptInfo(String[] info, Tutor t, String dayOfWeek) {
+        String time1 = "";
+        String time2 = "";
+        String id = "";
+        String cls = "";
+        for (int i = 0; i < info.length - 1; i++) {
+            String[] indivSplit = info[i].split(" ");
+            if (i == 0) {
+                time1 = indivSplit[0];
+                time2 = indivSplit[1];
+                id = indivSplit[3];
+            } else {
+                for (int j = 0; j < indivSplit.length - 2; j++) {
+                    if (indivSplit[j].equals("AM") || indivSplit[j].equals("PM")) {
+                        time1 = indivSplit[j - 1];
+                        time2 = indivSplit[j];
+                        id = indivSplit[j + 2];
+                        break;
+                    }
+                }
+            }
+            cls = indivSplit[indivSplit.length - 2];
+            t.addAnAttendance(id, dayOfWeek, parseStart(time1, time2), cls);
+        }
+    }
+
+    private String[] trim(String[] arr) {
+        int len = 0;
+        for (int i = 0; i < arr.length; i++) {
+            String curr = arr[i];
+            curr = curr.strip();
+            if (!curr.equals("")) {
+                len++;
+            }
+        }
+        String[] toReturn = new String[len];
+        for (int j = 0; j < len; j++) {
+            if (!arr[j].equals("") || !(arr[j] == null)) {
+                toReturn[j] = arr[j];
+            }
+        }
+        return toReturn;
+    }
+
+    private LocalTime parseStart(String time, String ampm) {
+        String parsed = "";
+        if (ampm.equals("AM")) {
+            parsed += "0" + time;
+        } if (time.split(":")[0].equals("12")) {
+            parsed = time;
+        } else {
+            int hour = Integer.parseInt(time.split(":")[0]);
+            hour += 12;
+            parsed = hour + ":" + time.split(":")[1];
+        }
+        return LocalTime.parse(parsed);
+    }
+
+    private String parseDayOfWeek(String date) {
+        String[] unparsed = date.split("/");
+        if (unparsed[0].length() == 1) {
+            unparsed[0] = "0" + unparsed[0];
+        }
+        if (unparsed[1].length() == 1) {
+            unparsed[1] = "0" + unparsed[1];
+        }
+        String dayOfWeek = LocalDate.parse(unparsed[2]+"-"+unparsed[0]+"-"+unparsed[1]).getDayOfWeek().toString();
+        return dayOfWeek;
+    }
+
+    /**
+     * Finds and returns a tutor based on their name.
+     * @param name
+     * @return
+     */
     public Tutor findTutor(String name) {
         for (int i = 0; i < this.listOfTutors.size(); i++) {
             Tutor t = this.listOfTutors.get(i);
-            if (t.name.equals(name)) {
+            if (t.name.toUpperCase().equals(name.toUpperCase())) {
                 return t;
             }
         }
         return null;
     }
 
+    /**
+     * Returns a list of tutors working on a given day.
+     * @param day
+     * @return
+     */
     public ArrayList<Tutor> tutorsWorkingToday(String day) {
         ArrayList<Tutor> tutors = new ArrayList<>();
         for (int i = 0; i < listOfTutors.size(); i++) {
@@ -116,6 +247,11 @@ public class Center {
         return tutors;
     }
 
+    /**
+     * Returns a list of tutors that tutor for a certain primary subject.
+     * @param primSubj
+     * @return
+     */
     public ArrayList<Tutor> tutorsForPrimSubj(String primSubj) {
         ArrayList<Tutor> tutors = new ArrayList<>();
         for (int i = 0; i < listOfTutors.size(); i++) {
@@ -128,6 +264,11 @@ public class Center {
         return tutors;
     }
 
+    /**
+     * Returns a list of tutors with a certain secondary subject.
+     * @param secSubj
+     * @return
+     */
     public ArrayList<Tutor> tutorsForSecSubj(String secSubj) {
         ArrayList<Tutor> tutors = new ArrayList<>();
         for (int i = 0; i < listOfTutors.size(); i++) {
@@ -139,6 +280,11 @@ public class Center {
         return tutors;
     }
 
+    /**
+     * Returns a list of tutors that cover a certain course.
+     * @param course
+     * @return
+     */
     public ArrayList<Tutor> tutorsForCourse(String course) {
         ArrayList<Tutor> tutors = new ArrayList<>();
         for (int i = 0; i < listOfTutors.size(); i++) {
@@ -150,6 +296,12 @@ public class Center {
         return tutors;
     }
 
+    /**
+     * Returns a list of tutors that tutor for a certain course on a certain day.
+     * @param course
+     * @param today
+     * @return
+     */
     public ArrayList<Tutor> tutorsForCourseToday(String course, String today) {
         ArrayList<Tutor> tutors = new ArrayList<>();
         for (int i = 0; i < listOfTutors.size(); i++) {
@@ -162,6 +314,11 @@ public class Center {
         return tutors;
     }
 
+    /**
+     * Returns names in our tutor database close to the given string.
+     * @param name
+     * @return
+     */
     public String getCloseByNames(String name) {
         String toReturn = "";
         
@@ -185,6 +342,9 @@ public class Center {
         return toReturn;
     }
 
+    /**
+     * Clears attendance for each tutor in this center. 
+     */
     public void clearAttendance() {
         for (int i = 0; i < listOfTutors.size(); i++) {
             listOfTutors.get(i).clearAttendance();

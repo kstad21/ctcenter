@@ -38,7 +38,7 @@ public class Tutor {
         ArrayList<Session> sessions = new ArrayList<>();
         for (int i = 0; i < appointments.size(); i++) {
             Session curr = appointments.get(i);
-            if (curr.getDayOfWeek().equals(day)) {
+            if (curr.getDayOfWeek().toUpperCase().equals(day.toUpperCase())) {
                 sessions.add(curr);
             }
         }
@@ -66,6 +66,11 @@ public class Tutor {
             }
         }
         return toReturn;
+    }
+
+    public void addAnAttendance(String ID, String day, LocalTime time, String cls) {
+        Session s = findSession(day, time);
+        s.addAnAttendance(ID + ":" + cls);
     }
 
     public String getWeeklySchedule() {
@@ -102,5 +107,5 @@ public class Tutor {
         this.courses.add(course);
     }
 
-    
+
 }

@@ -6,6 +6,8 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 public class Main {
     public static void main(String[] args) {
         Center CT = new Center("Content Tutoring Center");
@@ -66,6 +68,18 @@ public class Main {
                 //VALIDATION?
                 System.out.println("Enter a day (e.g Monday)");
                 String day = sc.nextLine().strip();
+                System.out.println("Enter a course");
+                String course = sc.nextLine().strip().toUpperCase();
+                ArrayList<Tutor> tutors = CT.tutorsForCourseToday(course, day);
+                for (int i = 0; i < tutors.size(); i++) {
+                    ArrayList<Session> apptsToday = tutors.get(i).getSessionsForToday(day);
+                    for (int j = 0; j < apptsToday.size(); j++) {
+                        System.out.println(apptsToday.get(j).toString());
+                    }
+                }
+            }
+            else if (prompt.equals("10") || prompt.equals("load attendance")) {
+                collectAttendance(CT);
             }
             else if (prompt.equals("exit") || prompt.equals("100")) {
                 running = false;
@@ -77,7 +91,7 @@ public class Main {
     }
 
     private static void printFunctions() {
-        System.out.println("Functions: 1)list tutors | 2)primsubj | 3)secsubj | 4)tutor's courses | 5)tutor schedule | 6)tutors for a course today | 100)exit | 101)help");
+        System.out.println("Functions: 1)list tutors | 2)primsubj | 3)secsubj | 4)tutor's courses | 5)tutor schedule | 6)tutors for a course today | 10)upload attendance | 100)exit | 101)help");
     }
 
     private static void printTutors(Center ct) {
@@ -102,5 +116,45 @@ public class Main {
             t = CT.findTutor(name);
         }
         return name;
+    }
+
+    private static void collectAttendance(Center CT) {
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("csv-files/appts.csv")));
+            String attendance = JOptionPane.showInputDialog("copy and paste RedRock report for today.");
+            attendance = attendance.replace("    ","\n");
+            attendance = getRidOfDelete(attendance);
+
+            out.write(attendance);
+            out.close();
+
+            CT.clearAttendance();
+            CT.loadAttendanceFromCSV("appts.csv");
+        } catch (IOException e) {
+            System.out.println("Looks like the information you updated is in the wrong format! Make sure you copy and pased the RedRock report exactly.");
+        }
+    }
+
+    private static String getRidOfDelete(String attendance) {
+        String[] splits = attendance.split(" ");
+        String toReturn = "";
+        for (int i = 0; i < splits.length; i++) {
+            if (splits[i].contains("\n") && splits[i].contains("Appointments:")) {
+                //System.out.println("." + splits[i] + ".");
+                String[] pts = splits[i].split("Appointments:");
+                splits[i] = pts[0].strip() + " Appointments:"; 
+                splits[i].replace("\n", "");
+            }
+            
+            if (!(splits[i].equals("-") || splits[i].equals("DELETED") 
+                    || splits[i].equals("Missed"))) {
+                toReturn += splits[i];
+            }
+            
+            if (!(i == splits.length - 1)) {
+                toReturn += " ";
+            }
+        }
+        return toReturn;
     }
 }
