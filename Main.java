@@ -28,24 +28,27 @@ public class Main {
                 System.out.println("Please input subject. For chem, type either CHEM(GEN) or CHEM(O).");
                 String subj = sc.nextLine().strip();
                 ArrayList<Tutor> tutors = CT.tutorsForPrimSubj(subj);
-                if (tutors.size() == 0) {
-                    System.out.println("Looks like you've input an invalid subject or a subject we don't have tutors for right now.");
-                } else {
-                    for (int i = 0; i < tutors.size(); i++) {
-                        System.out.println(tutors.get(i).toString());
-                    }
+                while (tutors.size() == 0) {
+                    System.out.println("Looks like you've input an invalid subject or a subject we don't have tutors for right now. Please enter the subject again: (e.g MATH10C or PSYC60):");
+                    subj = sc.nextLine().strip();
+                    tutors = CT.tutorsForPrimSubj(subj);
+                } 
+                for (int i = 0; i < tutors.size(); i++) {
+                    System.out.println(tutors.get(i).toString());
                 }
+                
             }
             else if (prompt.equals("3") || prompt.equals("secsubj")) {
                 System.out.println("Please input subject. For chem, type either CHEM(GEN) or CHEM(O).");
                 String subj = sc.nextLine().strip();
-                ArrayList<Tutor> tutors = CT.tutorsForPrimSubj(subj);
-                if (tutors.size() == 0) {
-                    System.out.println("Looks like you've input an invalid subject or a subject we don't have tutors for right now.");
-                } else {
-                    for (int i = 0; i < tutors.size(); i++) {
-                        System.out.println(tutors.get(i).toString());
-                    }
+                ArrayList<Tutor> tutors = CT.tutorsForSecSubj(subj);
+                while (tutors.size() == 0) {
+                    System.out.println("Looks like you've input an invalid subject or a subject we don't have tutors for right now. Please enter the subject again: (MATH, PHYSICS, PSYC, CHEM(GEN), CHEM(O), BIO):");
+                    subj = sc.nextLine().strip();
+                    tutors = CT.tutorsForSecSubj(subj);
+                } 
+                for (int i = 0; i < tutors.size(); i++) {
+                    System.out.println(tutors.get(i).toString());
                 }
             }
             else if (prompt.equals("4") || prompt.equals("tutor's courses")) {
