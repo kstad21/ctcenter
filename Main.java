@@ -106,6 +106,9 @@ public class Main {
                 for (int i = 0; i < sessions.size(); i++) {
                     System.out.println(sessions.get(i).toString());
                 }
+                if (sessions.size() == 0) {
+                    System.out.println("Looks like there are no sessions that meet your criteria! Consider increasing your maximum time difference.");
+                }
             }
             else if (prompt.equals("10") || prompt.equals("load attendance")) {
                 collectAttendance(CT);
@@ -228,7 +231,7 @@ public class Main {
             toReturn += "will prompt you for a day (make sure to type Monday, Tuesday, Wednesday, Thursday and so on). Finally, you will be prompted for a course (make sure to type in the format like MATH10C, where all alphabetic letters are capitalized and there is no space between the subject and the ID.). After all that, the program will print a list of all the tutors' appointments that are today for a certain course.";
         } 
         else if (command.equals("7") || command.equals("reschedule")) {
-            toReturn += "will prompt you for a day and course. Then the program will give you a list of still-open sessions (take note if you want to upload attendance first to see which sessions are full!), of which you can go to RedRock and schedule the student for!";
+            toReturn += "will prompt you for a day, course, target time, and maximum difference in time. Then the program will give you a list of still-open sessions (that meet the following criteria: they are on the specified day, within the max difference of time you provided to the target time you provided, the tutor that owns the session tutors the course you provided, and the session is not yet full) of which you can go to RedRock and schedule the student for! (take note if you want to upload attendance first to see which sessions are full!)";
         }
         else if (command.equals("10") || command.equals("load attendance")) {
             toReturn += "will cause a window to pop up. Copy and paste the RedRock report for the day you want to load attendances for and press <enter>. The program will go through the report and check if tutors have appointments, then take note of those appointments. Once those appointments are loaded, you can use the 5/tutor schedule command to check if a certain tutor has correctly had their appointments uploaded. Attendances and/or pospective attendances will be recorded and displayed as PID:Course.";
