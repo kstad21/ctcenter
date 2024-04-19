@@ -30,6 +30,7 @@ public class Session {
         }
         //"PID:Class" e.g "25344:MATH10B"
         this.attending = new ArrayList<>();
+        this.IP = IP;
     }
 
     /**

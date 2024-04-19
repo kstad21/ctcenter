@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -133,6 +134,8 @@ public class Center {
                         name = "Swadhin Rout";
                     } else if (findName[0].equals("Sriram")) {
                         name = "Sriram Selvakumara";
+                    } else if (findName[0].equals("Jet")) {
+                        name = "Jet Yue";
                     } else {
                         if (!(lineNum == 1)) {
                             name = findName[0] + " " + findName[1];
@@ -329,19 +332,35 @@ public class Center {
         return tutors;
     }
 
-    public ArrayList<Session> reschedule(String course, String today) {
+    public ArrayList<Session> reschedule(String course, String today, LocalTime target, int maxDif) {
         ArrayList<Session> toReturn = new ArrayList<>();
         ArrayList<Tutor> tutorsToday = tutorsForCourseToday(course, today);
         for (int i = 0; i < tutorsToday.size(); i++) {
             ArrayList<Session> tutorsSessionsToday = tutorsToday.get(i).getSessionsForToday(today);
             for (int j = 0; j < tutorsSessionsToday.size(); j++) {
                 Session curr = tutorsSessionsToday.get(j);
-                if (!curr.isFull()) {
+                LocalTime currStart = curr.getStart();
+                if (!curr.isFull() && isClose(target, currStart, maxDif)) {
                     toReturn.add(curr);
                 }
             }
         }
         return toReturn;
+    }
+
+    private boolean isClose(LocalTime target, LocalTime start, int maxDif) {
+        if (target.isAfter(start)) {
+            if (Duration.between(start, target).toMinutes() <= maxDif) {
+                return true;
+            }
+        } else if (target.isBefore(start)) {
+            if (Duration.between(target, start).toMinutes() <= maxDif) {
+                return true;
+            }
+        } else if (target.equals(start)) {
+            return true;
+        }
+        return false;
     }
 
     /**

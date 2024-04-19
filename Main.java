@@ -98,7 +98,11 @@ public class Main {
                     System.out.println("Looks like the course you entered doesn't match any in our CT Center. Make sure to use the format like MATH10C or PSYC60:");
                     course = sc.nextLine().strip().toUpperCase();
                 }
-                ArrayList<Session> sessions = CT.reschedule(course, day);
+                System.out.println("Enter a target time: military time, no AM or PM. For example: for 6 pm put 18:00.");
+                LocalTime target = LocalTime.parse(sc.nextLine());
+                System.out.println("Enter a maximum difference (minutes) in time between suggested and target sessions: (e.g 30)");
+                int maxDif = sc.nextInt();
+                ArrayList<Session> sessions = CT.reschedule(course, day, target, maxDif);
                 for (int i = 0; i < sessions.size(); i++) {
                     System.out.println(sessions.get(i).toString());
                 }
